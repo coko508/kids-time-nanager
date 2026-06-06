@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0F172A">
+    <meta name="description" content="小朋友的时间管理助手，帮助养成良好时间管理习惯">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>⏰ 小小时间管理师</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+</head>
+<body>
+    <!-- 用户管理页面（首次使用） -->
+    <div class="user-management-page" id="userManagementPage" style="display: none;">
+        <div class="user-management-container">
+            <div class="user-management-header">
+                <h1>👥 用户管理</h1>
+                <button class="btn-add-user" onclick="showAddUserForm()">➕ 添加用户</button>
+            </div>
+            <div class="user-management-list" id="userManagementList">
+                <!-- 用户列表 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户选择页面 -->
+    <div class="user-selection-page" id="userSelectionPage" style="display: none;">
+        <div class="user-selection-container">
+            <div class="user-selection-header">
+                <div class="user-selection-mascot">🐻</div>
+                <h1>⏰ 小小时间管理师</h1>
+                <p>选择你的账号</p>
+            </div>
+            <div class="user-selection-list" id="userSelectionList">
+                <!-- 用户选择列表 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 主应用（登录后显示） -->
+    <div class="app-container" id="appContainer" style="display: none;">
+        <!-- 设置按钮 -->
+        <button class="btn-settings" onclick="showSettingsModal()">⚙️</button>
+        
+        <!-- 头部 -->
+        <header class="app-header">
+            <div class="mascot">🐻</div>
+            <h1>小小时间管理师</h1>
+            <div class="current-time" id="currentTime"></div>
+        </header>
+
+        <!-- 激励寄语 -->
+        <div class="encouragement-section" id="encouragementSection">
+            <div class="encouragement-card">
+                <div class="encouragement-icon">💌</div>
+                <div class="encouragement-content">
+                    <div class="encouragement-title" id="encouragementTitle">致亲爱的Elina</div>
+                    <div class="encouragement-text" id="encouragementText">
+                        你是最棒的时间管理小能手！每完成一个任务，你就离成功更近一步。记住，坚持就是胜利，爸爸妈妈为你骄傲！⭐
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区域 - 左右布局 -->
+        <div class="main-content">
+            <!-- 左侧：任务列表 -->
+            <div class="left-panel">
+                <!-- 任务类型标签 -->
+                <div class="task-types-section">
+                    <div class="section-header">
+                        <h2>📋 任务类型</h2>
+                        <button class="btn-add-type" onclick="showAddTypeModal()">+ 添加类型</button>
+                    </div>
+                    <div class="task-types-list" id="taskTypesList">
+                        <!-- 动态生成任务类型 -->
+                    </div>
+                </div>
+
+                <!-- 任务列表 -->
+                <div class="tasks-section">
+                    <div class="section-header tasks-header-fixed">
+                        <h2>📝 我的任务</h2>
+                        <button class="btn-add-task" onclick="showAddTaskModal()">+ 添加任务</button>
+                    </div>
+                    <div class="tasks-list-container">
+                        <div class="tasks-list" id="tasksList">
+                            <!-- 动态生成任务列表 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧面板 -->
+            <div class="right-panel">
+                <!-- 统计卡片 -->
+                <div class="stats-section">
+                    <h2>📊 完成统计</h2>
+                    <div class="stats-grid">
+                        <div class="stats-row">
+                            <div class="stat-card today-card">
+                                <span class="stat-badge today">今日</span>
+                                <span class="stat-icon">📚</span>
+                                <span class="stat-number" id="todayTasks">0</span>
+                                <span class="stat-label">任务</span>
+                            </div>
+                            <div class="stat-card today-card">
+                                <span class="stat-badge today">今日</span>
+                                <span class="stat-icon">✅</span>
+                                <span class="stat-number" id="todayCompleted">0</span>
+                                <span class="stat-label">完成</span>
+                            </div>
+                            <div class="stat-card today-card">
+                                <span class="stat-badge today">今日</span>
+                                <span class="stat-icon">⭐</span>
+                                <span class="stat-number" id="todayStars">0</span>
+                                <span class="stat-label">星星</span>
+                            </div>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-card total-card">
+                                <span class="stat-badge total">累计</span>
+                                <span class="stat-icon">📋</span>
+                                <span class="stat-number" id="totalTasks">0</span>
+                                <span class="stat-label">任务</span>
+                            </div>
+                            <div class="stat-card total-card">
+                                <span class="stat-badge total">累计</span>
+                                <span class="stat-icon">🏆</span>
+                                <span class="stat-number" id="totalCompleted">0</span>
+                                <span class="stat-label">完成</span>
+                            </div>
+                            <div class="stat-card total-card">
+                                <span class="stat-badge total">累计</span>
+                                <span class="stat-icon">🌟</span>
+                                <span class="stat-number" id="totalStars">0</span>
+                                <span class="stat-label">星星</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 进度条 -->
+                    <div class="progress-section" id="progressSection">
+                        <div class="progress-label">
+                            <span>任务进度</span>
+                            <span id="progressPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <!-- 查看历史按钮 -->
+                    <button class="btn-history" onclick="showHistoryPage()">📜 查看历史记录</button>
+                </div>
+
+                <!-- 任务详情 -->
+                <div class="task-detail-section" id="taskDetailSection">
+                    <h2>📋 任务详情</h2>
+                    <div class="task-detail-card" id="taskDetailCard">
+                        <div class="detail-empty">
+                            <span class="empty-icon">👈</span>
+                            <p>点击左侧任务查看详情</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑任务弹窗 -->
+    <div class="modal" id="addTaskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="taskModalTitle">📝 添加新任务</h3>
+                <button class="btn-close" onclick="closeAddTaskModal()">×</button>
+            </div>
+            <form id="addTaskForm">
+                <input type="hidden" id="editTaskId">
+                <div class="form-group">
+                    <label>任务名称</label>
+                    <input type="text" id="taskName" placeholder="例如：完成数学作业" required>
+                </div>
+                <div class="form-group">
+                    <label>任务类型</label>
+                    <select id="taskType" required>
+                        <!-- 动态生成选项 -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>📅 任务日期</label>
+                    <input type="date" id="taskDate" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>⏰ 开始时间</label>
+                        <input type="time" id="startTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label>⏰ 结束时间</label>
+                        <input type="time" id="endTime" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>提醒时间（提前几分钟）</label>
+                    <select id="reminderTime">
+                        <option value="0">不提醒</option>
+                        <option value="5">5分钟</option>
+                        <option value="10">10分钟</option>
+                        <option value="15">15分钟</option>
+                        <option value="30">30分钟</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>备注（可选）</label>
+                    <textarea id="taskNote" placeholder="添加一些备注..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit" id="taskSubmitBtn">🚀 添加任务</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 添加/编辑任务类型弹窗 -->
+    <div class="modal" id="addTypeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="typeModalTitle">📋 添加任务类型</h3>
+                <button class="btn-close" onclick="closeAddTypeModal()">×</button>
+            </div>
+            <form id="addTypeForm">
+                <input type="hidden" id="editTypeId">
+                <div class="form-group">
+                    <label>类型名称</label>
+                    <input type="text" id="typeName" placeholder="例如：运动" required>
+                </div>
+                <div class="form-group">
+                    <label>选择图标</label>
+                    <div class="emoji-picker" id="emojiPicker">
+                        <span class="emoji-option" data-emoji="📚">📚</span>
+                        <span class="emoji-option" data-emoji="✏️">✏️</span>
+                        <span class="emoji-option" data-emoji="🎨">🎨</span>
+                        <span class="emoji-option" data-emoji="🎵">🎵</span>
+                        <span class="emoji-option" data-emoji="⚽">⚽</span>
+                        <span class="emoji-option" data-emoji="🏃">🏃</span>
+                        <span class="emoji-option" data-emoji="🎮">🎮</span>
+                        <span class="emoji-option" data-emoji="📖">📖</span>
+                        <span class="emoji-option" data-emoji="🧹">🧹</span>
+                        <span class="emoji-option" data-emoji="🍽️">🍽️</span>
+                        <span class="emoji-option" data-emoji="😴">😴</span>
+                        <span class="emoji-option" data-emoji="🎯">🎯</span>
+                        <span class="emoji-option" data-emoji="🎹">🎹</span>
+                        <span class="emoji-option" data-emoji="🎭">🎭</span>
+                        <span class="emoji-option" data-emoji="🔬">🔬</span>
+                        <span class="emoji-option" data-emoji="🌍">🌍</span>
+                        <span class="emoji-option" data-emoji="✍️">✍️</span>
+                        <span class="emoji-option" data-emoji="🧮">🧮</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>选择颜色</label>
+                    <div class="color-picker" id="colorPicker">
+                        <span class="color-option" data-color="#FF6B6B" style="background: #FF6B6B;"></span>
+                        <span class="color-option" data-color="#4ECDC4" style="background: #4ECDC4;"></span>
+                        <span class="color-option" data-color="#45B7D1" style="background: #45B7D1;"></span>
+                        <span class="color-option" data-color="#96CEB4" style="background: #96CEB4;"></span>
+                        <span class="color-option" data-color="#FFEAA7" style="background: #FFEAA7;"></span>
+                        <span class="color-option" data-color="#DDA0DD" style="background: #DDA0DD;"></span>
+                        <span class="color-option" data-color="#98D8C8" style="background: #98D8C8;"></span>
+                        <span class="color-option" data-color="#F7DC6F" style="background: #F7DC6F;"></span>
+                        <span class="color-option" data-color="#FFB6C1" style="background: #FFB6C1;"></span>
+                        <span class="color-option" data-color="#87CEEB" style="background: #87CEEB;"></span>
+                        <span class="color-option" data-color="#DDA0DD" style="background: #DDA0DD;"></span>
+                        <span class="color-option" data-color="#F0E68C" style="background: #F0E68C;"></span>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" id="typeSubmitBtn">✨ 添加类型</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚙️ 设置</h3>
+                <button class="btn-close" onclick="closeSettingsModal()">×</button>
+            </div>
+            <form id="settingsForm">
+                <div class="form-group">
+                    <label>小朋友的名字</label>
+                    <input type="text" id="childName" placeholder="例如：小明" value="Elina">
+                </div>
+                <div class="form-group">
+                    <label>激励寄语</label>
+                    <textarea id="encouragementMessage" placeholder="写一段鼓励的话..." rows="4">你是最棒的时间管理小能手！每完成一个任务，你就离成功更近一步。记住，坚持就是胜利，爸爸妈妈为你骄傲！⭐</textarea>
+                    <small class="form-hint">这段寄语会显示在首页，激励孩子按时完成任务</small>
+                </div>
+                <div class="form-group">
+                    <label>选择吉祥物</label>
+                    <div class="mascot-picker" id="mascotPicker">
+                        <span class="mascot-option selected" data-mascot="🐻">🐻</span>
+                        <span class="mascot-option" data-mascot="🐰">🐰</span>
+                        <span class="mascot-option" data-mascot="🐱">🐱</span>
+                        <span class="mascot-option" data-mascot="🐶">🐶</span>
+                        <span class="mascot-option" data-mascot="🦁">🦁</span>
+                        <span class="mascot-option" data-mascot="🐼">🐼</span>
+                        <span class="mascot-option" data-mascot="🦄">🦄</span>
+                        <span class="mascot-option" data-mascot="🐨">🐨</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">💾 保存设置</button>
+                <button type="button" class="btn-logout" onclick="goToUserManagement()">👥 用户管理</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 历史记录弹窗 -->
+    <div class="modal history-modal" id="historyModal">
+        <div class="modal-content history-content">
+            <div class="modal-header">
+                <h3>📜 历史记录</h3>
+                <button class="btn-close" onclick="closeHistoryModal()">×</button>
+            </div>
+            <div class="history-filters">
+                <button class="filter-btn" id="filterToday" onclick="renderHistoryList('today')">今天</button>
+                <button class="filter-btn" id="filterWeek" onclick="renderHistoryList('week')">本周</button>
+                <button class="filter-btn" id="filterAll" onclick="renderHistoryList()">全部</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- 历史记录列表 -->
+            </div>
+            <div class="history-actions">
+                <button class="btn-clear-history" onclick="clearHistory()">🗑️ 清空历史</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提醒弹窗 -->
+    <div class="modal reminder-modal" id="reminderModal">
+        <div class="modal-content reminder-content">
+            <div class="reminder-animation">⏰</div>
+            <h3>任务提醒！</h3>
+            <p id="reminderText">你的任务即将开始！</p>
+            <button class="btn-submit" onclick="closeReminderModal()">知道了</button>
+        </div>
+    </div>
+
+    <!-- 开始执行确认弹窗 -->
+    <div class="modal start-modal" id="startTaskModal">
+        <div class="modal-content start-content">
+            <div class="start-animation" id="startAnimation">🚀</div>
+            <h3 id="startTaskTitle">准备开始任务！</h3>
+            <p id="startTaskText">确认要开始执行这个任务吗？</p>
+            <div class="start-actions">
+                <button class="btn-cancel" onclick="closeStartTaskModal()">还没准备好</button>
+                <button class="btn-start-confirm" onclick="confirmStartTask()">🎯 开始执行！</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 超时提醒弹窗 -->
+    <div class="modal overdue-modal" id="overdueModal">
+        <div class="modal-content overdue-content">
+            <div class="overdue-animation" id="overdueAnimation"></div>
+            <h3 id="overdueTitle">⏰ 任务超时啦！</h3>
+            <p id="overdueText">快快开始行动吧！</p>
+            <button class="btn-overdue" onclick="handleOverdueAction()">👀 我知道了！</button>
+        </div>
+    </div>
+
+    <!-- 完成任务庆祝 -->
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🎉</div>
+            <h2 id="celebrationTitle">太棒了！</h2>
+            <p id="celebrationText">你完成了一个任务！</p>
+            <div class="stars-earned">+⭐</div>
+        </div>
+    </div>
+
+    <!-- 安装提示 -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-content">
+            <span>📱 添加到主屏幕，像App一样使用！</span>
+            <button onclick="dismissInstallPrompt()">×</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // 注册 Service Worker（PWA支持）
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            });
+        }
+    </script>
+</body>
+</html>
